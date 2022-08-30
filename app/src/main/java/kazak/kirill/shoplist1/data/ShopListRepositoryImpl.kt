@@ -1,5 +1,7 @@
 package kazak.kirill.shoplist1.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import kazak.kirill.shoplist1.domain.ShopItem
 import kazak.kirill.shoplist1.domain.ShopItem.Companion.UNDEFINED_ID
 import kazak.kirill.shoplist1.domain.ShopListRepository
@@ -7,12 +9,13 @@ import java.lang.RuntimeException
 
 object ShopListRepositoryImpl: ShopListRepository {
 
+    private val shopListLD = MutableLiveData<List<ShopItem>>()
     private val shopList = mutableListOf<ShopItem>()
     private var autoIncrementId = 0
 
     init {
         for (i in 0 until 5) {
-            shopList.add(ShopItem("Name $i", i, true))
+            addShopItem(ShopItem("Name $i", i, true))
         }
     }
 
@@ -21,6 +24,7 @@ object ShopListRepositoryImpl: ShopListRepository {
             shopItem.id = autoIncrementId++
         }
         shopList.add(shopItem)
+        updateList()
     }
 
     override fun editShopItem(shopItem: ShopItem) {
@@ -35,11 +39,16 @@ object ShopListRepositoryImpl: ShopListRepository {
         } ?: throw RuntimeException("Shop item with id $shopItemId not found")
     }
 
-    override fun getShopList(): List<ShopItem> {
-        return shopList.toList()
+    override fun getShopList(): LiveData<List<ShopItem>> {
+        return shopListLD
     }
 
     override fun removeShopItem(shopItem: ShopItem) {
         shopList.remove(shopItem)
+        updateList()
+    }
+
+    private fun updateList() {
+        shopListLD.value = shopList.toList()
     }
 }
