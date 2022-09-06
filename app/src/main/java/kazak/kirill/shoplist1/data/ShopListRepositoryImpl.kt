@@ -6,6 +6,7 @@ import kazak.kirill.shoplist1.domain.ShopItem
 import kazak.kirill.shoplist1.domain.ShopItem.Companion.UNDEFINED_ID
 import kazak.kirill.shoplist1.domain.ShopListRepository
 import java.lang.RuntimeException
+import kotlin.random.Random
 
 object ShopListRepositoryImpl: ShopListRepository {
 
@@ -14,8 +15,8 @@ object ShopListRepositoryImpl: ShopListRepository {
     private var autoIncrementId = 0
 
     init {
-        for (i in 0 until 5) {
-            addShopItem(ShopItem("Name $i", i, true))
+        for (i in 0 until 1000) {
+            addShopItem(ShopItem("Name $i", i, Random.nextBoolean()))
         }
     }
 
